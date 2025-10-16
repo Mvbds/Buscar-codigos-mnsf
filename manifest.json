@@ -1,0 +1,22 @@
+{
+  "name": "MNSF Codigos",
+  "short_name": "MNSF",
+  "start_url": "/Buscar-codigos-mnsf/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#e53935",
+  "icons": [
+    {
+      "src": "/Buscar-codigos-mnsf/logo-mnsf.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Buscar-codigos-mnsf/logo-mnsf.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
