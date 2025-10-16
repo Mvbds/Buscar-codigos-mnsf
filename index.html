@@ -1,558 +1,358 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Códigos MNSF — App</title>
-  <meta name="theme-color" content="#0b74ff">
+  <title>MNSF Codigos</title>
+
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#ff3b3b" />
+
   <style>
     :root{
-      --bg: #f7f9fc;
-      --card: #ffffff;
-      --muted: #6b7280;
-      --text: #0f172a;
-      --primary: #0b74ff;
-      --danger: #ff3b30;
-      --glass: rgba(255,255,255,0.6);
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --primary:#e53935; /* vermelho similar à logo */
+      --accent:#ffc107;  /* amarelo */
+      --bg:#fff;
+      --muted:#6b7280;
+      --card:#f8fafc;
+      --radius:12px;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%, #eef4ff 100%);color:var(--text)}
-    .app{
-      max-width:920px;margin:20px auto;padding:18px;
-      display:grid;grid-template-columns:1fr;gap:16px;
-    }
-    header.app-header{
-      display:flex;align-items:center;gap:12px;justify-content:space-between;
-      background:linear-gradient(90deg,var(--primary),#0a62d6);
-      color:white;padding:12px 16px;border-radius:12px;box-shadow:0 6px 20px rgba(11,116,255,0.18);
-    }
-    header .title{display:flex;gap:12px;align-items:center}
-    header h1{font-size:1.05rem;margin:0}
-    header p{margin:0;font-size:0.85rem;opacity:0.95}
-    .controls{
-      display:flex;gap:12px;align-items:center;
-      flex-wrap:wrap;
-    }
-    .search, select, .btn{
-      border-radius:10px;border:1px solid rgba(15,23,42,0.06);
-      padding:10px 12px;background:var(--card);box-shadow:0 1px 3px rgba(12,18,30,0.04);
-      font-size:0.95rem;
-    }
-    .search{min-width:220px;flex:1}
-    select{min-width:170px}
-    .btn{display:inline-flex;gap:8px;align-items:center;cursor:pointer}
-    .btn-primary{background:linear-gradient(90deg,var(--primary),#0a62d6);color:white;padding:10px 14px;border:none}
-    .btn-ghost{background:transparent;border:1px dashed rgba(15,23,42,0.06)}
-    main{display:grid;grid-template-columns:1fr;gap:12px}
-    .list{
-      background:transparent;border-radius:12px;padding:12px;display:grid;gap:10px;
-    }
-    .category-title{font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;padding:6px 4px}
-    .card{
-      display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:10px;
-      background:var(--card);box-shadow:0 6px 18px rgba(12,18,30,0.04);border:1px solid rgba(15,23,42,0.03);
-    }
-    .left{display:flex;gap:12px;align-items:center;min-width:0}
-    .avatar{
-      width:56px;height:56px;border-radius:10px;flex-shrink:0;
-      display:flex;align-items:center;justify-content:center;font-weight:700;
-      background:linear-gradient(135deg,#eef6ff,#fff);color:var(--primary);border:1px solid rgba(11,116,255,0.06)
-    }
-    .meta{min-width:0}
-    .name{font-weight:700;font-size:0.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;color:var(--muted);font-size:0.88rem}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,#fff 0%, #fffbf1 100%);}
+    .app{max-width:880px;margin:0 auto;padding:14px;display:flex;flex-direction:column;min-height:100vh;box-sizing:border-box}
+    header{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:rgba(255,255,255,0.8);box-shadow:0 6px 18px rgba(0,0,0,0.06);backdrop-filter:blur(6px)}
+    .logo{width:66px;height:66px;border-radius:999px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .logo img{width:100%;height:100%;object-fit:contain;display:block}
+    h1{font-size:18px;margin:0;color:#111;font-weight:700}
+    p.subtitle{margin:0;color:var(--muted);font-size:13px}
+
+    .controls{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .search{flex:1;min-width:160px}
+    input.search-input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #e6e9ee;background:white;font-size:15px;box-shadow:0 1px 0 rgba(0,0,0,0.02)}
+    select.cat-select{padding:10px 12px;border-radius:10px;border:1px solid #e6e9ee;background:white;font-size:14px}
+    .btn{padding:10px 12px;border-radius:10px;background:var(--primary);color:white;font-weight:600;border:0;display:inline-flex;gap:8px;align-items:center}
+    .btn.ghost{background:transparent;color:var(--primary);border:1px solid rgba(0,0,0,0.06)}
+    .btn.small{padding:8px 10px;font-size:14px}
+
+    main{margin-top:14px;flex:1}
+    .list{display:flex;flex-direction:column;gap:10px}
+    .category-title{margin:14px 0 6px;font-weight:700;color:#222}
+    .card{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:12px;background:var(--card);box-shadow:0 4px 12px rgba(0,0,0,0.03)}
+    .left{display:flex;gap:12px;align-items:center}
+    .prod-name{font-weight:700}
+    .prod-code{font-family:monospace;color:var(--muted);font-size:13px;margin-top:4px}
     .actions{display:flex;gap:8px;align-items:center}
-    .icon-btn{width:40px;height:40px;border-radius:8px;border:none;background:transparent;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
-    .icon-btn svg{width:20px;height:20px;color:var(--muted)}
-    .icon-btn.primary{background:rgba(11,116,255,0.08)}
-    .icon-btn.danger{background:rgba(255,59,48,0.06)}
-    .noresults{text-align:center;padding:28px;color:var(--muted);background:var(--card);border-radius:10px}
-    footer{font-size:0.82rem;color:var(--muted);text-align:center;padding:12px 0}
+    .icon-btn{background:transparent;border:0;padding:8px;border-radius:8px;cursor:pointer}
+    .icon-btn:hover{background:rgba(0,0,0,0.03)}
 
-    /* Modal */
-    .overlay{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:flex;align-items:center;justify-content:center;z-index:120;opacity:0;pointer-events:none;transition:opacity .18s}
-    .overlay.visible{opacity:1;pointer-events:auto}
-    .modal{background:var(--card);padding:18px;border-radius:12px;max-width:520px;width:94%;box-shadow:0 12px 40px rgba(2,6,23,0.2)}
-    .modal h3{margin:0 0 8px 0}
-    .form-row{display:flex;gap:8px;margin-top:8px}
-    .form-row input,.form-row select{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(12,18,30,0.06)}
-    .modal .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+    .noresults{text-align:center;color:var(--muted);padding:28px 8px}
 
-    /* small screens */
-    @media (max-width:520px){
-      .left{gap:10px}
-      .avatar{width:48px;height:48px}
-      .search{min-width:140px}
-      .controls{flex-direction:column;align-items:stretch}
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:40}
+    .modal{background:white;padding:16px;border-radius:14px;max-width:460px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+    .modal header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .field{margin:8px 0}
+    .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    .field input,.field select{width:100%;padding:10px;border-radius:8px;border:1px solid #e6e9ee}
+    .modal .row{display:flex;gap:8px}
+    .modal .row .col{flex:1}
+    .muted{color:var(--muted);font-size:13px}
+
+    footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px;padding-bottom:20px}
+
+    /* responsive */
+    @media (max-width:640px){
+      header{gap:10px;padding:10px}
+      .logo{width:56px;height:56px}
+      .btn{padding:9px 10px}
     }
   </style>
-  <!-- JsBarcode (CDN) - used to generate barcodes (CODE128) -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
-  <div class="app" id="app">
-    <header class="app-header">
-      <div class="title">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <rect width="24" height="24" rx="6" fill="white" opacity="0.06"></rect>
-          <path d="M5 12h14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M7 7h10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M7 17h10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <div>
-          <h1>Códigos MNSF</h1>
-          <p>Lista de códigos — toque em um item para ver o código de barras</p>
-        </div>
+  <div class="app">
+    <header>
+      <div class="logo"><img src="./logo-mnsf.png" alt="MNSF logo" id="appLogo"></div>
+      <div>
+        <h1>MNSF Códigos</h1>
+        <p class="subtitle">Busque produtos pelo nome ou código — todos salvam no Google Sheets</p>
       </div>
-
-      <div style="display:flex;gap:8px;align-items:center">
-        <button id="installBtn" class="btn btn-ghost" title="Instalar app" style="display:none">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M12 3v12" stroke="#0b74ff" stroke-width="1.6" stroke-linecap="round"/><path d="M8 7l4-4 4 4" stroke="#0b74ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="15" width="18" height="6" rx="2" stroke="#0b74ff" stroke-width="1.6"/></svg> Instalar
-        </button>
-        <button id="addBtn" class="btn btn-primary" title="Adicionar item">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="white" stroke-width="2" stroke-linecap="round"/></svg> Adicionar
-        </button>
+      <div style="margin-left:auto">
+        <button id="installBtn" class="btn small" style="display:none">Instalar</button>
       </div>
     </header>
 
     <div class="controls">
-      <input id="searchInput" class="search" placeholder="Pesquisar por nome ou código..." aria-label="Pesquisar">
-      <select id="categoria" class="search">
-        <option value="all">Todas as Categorias</option>
+      <div class="search">
+        <input id="searchInput" class="search-input" placeholder="Pesquisar por nome ou código..." />
+      </div>
+
+      <select id="categorySelect" class="cat-select" aria-label="Categoria">
+        <option value="all">Todas as categorias</option>
       </select>
-      <button id="resetBtn" class="btn btn-ghost" title="Redefinir dados">Redefinir</button>
+
+      <button id="addProductBtn" class="btn">+ Produto</button>
+      <button id="addCategoryBtn" class="btn ghost">+ Categoria</button>
     </div>
 
     <main>
-      <div id="results" class="list" aria-live="polite"></div>
-      <div id="emptyHint" class="noresults" style="display:none">Nenhum item encontrado</div>
+      <div id="contentArea" class="list"></div>
+      <div id="noResults" class="noresults" style="display:none">Nenhum resultado encontrado</div>
     </main>
 
-    <footer>© 2025 Códigos MNSF — Toque em compartilhar → Adicionar à Tela de Início</footer>
+    <footer>Toque em compartilhar → Adicionar à Tela de Início para instalar (ou use o botão instalar).</footer>
   </div>
 
-  <!-- Modal: Barcode -->
-  <div id="barcodeOverlay" class="overlay" aria-hidden="true">
+  <!-- modal backdrop -->
+  <div id="modalBackdrop" class="modal-backdrop">
     <div class="modal" role="dialog" aria-modal="true">
-      <h3 id="barcodeTitle"></h3>
-      <div style="display:flex;gap:12px;align-items:center;justify-content:center;padding:14px;background:linear-gradient(180deg,#fff,#f8fbff);border-radius:8px;margin-top:8px">
-        <svg id="barcodeSVG" xmlns="http://www.w3.org/2000/svg" width="320" height="90"></svg>
-      </div>
-      <p style="text-align:center;font-family:ui-monospace,monospace;margin-top:10px" id="barcodeText"></p>
-      <div class="modal-actions">
-        <button id="closeBarcode" class="btn btn-ghost">Fechar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Add/Edit -->
-  <div id="editOverlay" class="overlay" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true">
-      <h3 id="editTitle">Adicionar Item</h3>
-      <form id="editForm">
-        <input type="hidden" id="itemId">
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <input id="itemName" placeholder="Nome do item" required>
-          <input id="itemCode" placeholder="Código do item (ex: 37260 ou ABC123)" required>
-          <select id="itemCategory" required>
-            <!-- options populated by JS -->
-          </select>
+      <header>
+        <strong id="modalTitle">Adicionar Produto</strong>
+      </header>
+      <div id="modalBody">
+        <div class="field">
+          <label>Categoria</label>
+          <select id="modalCategory"></select>
         </div>
-        <div class="modal-actions">
-          <button type="button" id="cancelEdit" class="btn btn-ghost">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Salvar</button>
+        <div class="field">
+          <label>Nome do produto</label>
+          <input id="modalName" type="text" placeholder="Ex: Cebola Branca" />
         </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal: Delete -->
-  <div id="deleteOverlay" class="overlay" aria-hidden="true">
-    <div class="modal">
-      <h3>Apagar item?</h3>
-      <p style="color:var(--muted)">Esta ação não pode ser desfeita.</p>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-        <button id="cancelDelete" class="btn btn-ghost">Cancelar</button>
-        <button id="confirmDelete" class="btn" style="background:var(--danger);color:white">Apagar</button>
+        <div class="field">
+          <label>Código</label>
+          <input id="modalCode" type="text" placeholder="Ex: 37269" />
+        </div>
+        <div class="field muted">Os dados serão salvos diretamente na planilha do Google (visível a todos).</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end">
+        <button id="cancelModal" class="btn ghost">Cancelar</button>
+        <button id="saveModal" class="btn">Salvar</button>
       </div>
     </div>
   </div>
 
-  <script>
-    // ---------- Data (initial) ----------
-    const DATA_KEY = 'mnsfCodesData_v1';
-    const initialData = {
-      "Hortifruti": [
-        { id: 'h1', nome: "ABACATE", codigo: "37260" }, { id: 'h2', nome: "ABACAXI 1UN", codigo: "2865" }, { id: 'h3', nome: "ABOBRINHA", codigo: "37485" }, { id: 'h4', nome: "ABÓBORA CABOCLA", codigo: "2890" }, { id: 'h5', nome: "ABÓBORA JACARÉ", codigo: "37263" }, { id: 'h6', nome: "ABÓBORA LEITE", codigo: "37264" }, { id: 'h7', nome: "ALFACE", codigo: "5814" }, { id: 'h8', nome: "AMEIXA FRESCA", codigo: "37788" }, { id: 'h9', nome: "BANANA PRATA", codigo: "37265" }, { id: 'h10', nome: "BATATA DOCE", codigo: "37266" }, { id: 'h11', nome: "BATATA INGLESA", codigo: "37267" }, { id: 'h12', nome: "BERINJELA", codigo: "37489" }, { id: 'h13', nome: "BETERRABA", codigo: "37268" }, { id: 'h14', nome: "BRÓCOLIS", codigo: "175" }, { id: 'h15', nome: "CEBOLA BRANCA", codigo: "37269" }, { id: 'h16', nome: "CEBOLA ROXA", codigo: "37270" }, { id: 'h17', nome: "CENOURA", codigo: "37271" }, { id: 'h18', nome: "CHEIRO VERDE", codigo: "37731" }, { id: 'h19', nome: "CHUCHU", codigo: "37272" }, { id: 'h20', nome: "COCO VERDE", codigo: "2944" }, { id: 'h21', nome: "COUVE FLOR", codigo: "37492" }, { id: 'h22', nome: "GENGIBRE", codigo: "38786" }, { id: 'h23', nome: "GOIABA", codigo: "37273" }, { id: 'h24', nome: "GRAVIOLA", codigo: "2985" }, { id: 'h25', nome: "KIWI", codigo: "38784" }, { id: 'h26', nome: "LARANJA", codigo: "37274" }, { id: 'h27', nome: "LIMÃO TAYTI", codigo: "37276" }, { id: 'h28', nome: "MACAXEIRA", codigo: "2884" }, { id: 'h29', nome: "MAMÃO", codigo: "37278" }, { id: 'h30', nome: "MAMÃO PAPAIA", codigo: "2888" }, { id: 'h31', nome: "MANGA COITÉ", codigo: "40957" }, { id: 'h32', nome: "MANGA TOMY", codigo: "37280" }, { id: 'h33', nome: "MARACUJÁ", codigo: "37281" }, { id: 'h34', nome: "MAÇÃ IMPORTADA", codigo: "38297" }, { id: 'h35', nome: "MAÇÃ NACIONAL", codigo: "37496" }, { id: 'h36', nome: "MAÇÃ VERDE", codigo: "37787" }, { id: 'h37', nome: "MAXIXI", codigo: "2961" }, { id: 'h38', nome: "MELANCIA BABY", codigo: "179388" }, { id: 'h39', nome: "MELÃO ESPANHOL", codigo: "2895" }, { id: 'h40', nome: "MELÃO JAPONÊS", codigo: "37348" }, { id: 'h41', nome: "PEPINO COMUM", codigo: "37500" }, { id: 'h42', nome: "PERA", codigo: "37501" }, { id: 'h43', nome: "PIMENTA DE CHEIRO", codigo: "37502" }, { id: 'h44', nome: "PIMENTÃO VERDE", codigo: "37349" }, { id: 'h45', nome: "PITAYA", codigo: "3097" }, { id: 'h46', nome: "POLPA MARACUJÁ", codigo: "3204" }, { id: 'h47', nome: "REPOLHO ROXO", codigo: "2941" }, { id: 'h48', nome: "REPOLHO VERDE", codigo: "37350" }, { id: 'h49', nome: "SALADA DE FRUTA", codigo: "3199" }, { id: 'h50', nome: "SALADA DE LEGUMES", codigo: "3201" }, { id: 'h51', nome: "TANGERINA", codigo: "2956" }, { id: 'h52', nome: "TOMATE", codigo: "37503" }, { id: 'h53', nome: "UVA PASSAS", codigo: "40029" }
-      ],
-      "Produtos Gerais": [
-        { id: 'g1', nome: "ALHO UND", codigo: "90" }, { id: 'g2', nome: "BÁLSAMO AMENDOIM UND", codigo: "6910" }, { id: 'g3', nome: "CARAMELO EMBARE UND", codigo: "7946" }, { id: 'g4', nome: "FARINHA BRANCA KG", codigo: "2559" }, { id: 'g5', nome: "FARINHA D'ÁGUA KG", codigo: "5717" }, { id: 'g6', nome: "LÂMINA BIC UND", codigo: "2417" }, { id: 'g7', nome: "LÂMINA WILKINSON", codigo: "4816" }, { id: 'g8', nome: "LIXA DE UNHA UND", codigo: "4082" }, { id: 'g9', nome: "OVO BRANCO UND", codigo: "4080" }, { id: 'g10', nome: "OVO VERMELHO UND", codigo: "4150" }, { id: 'g11', nome: "PALITO DE UNHA UND", codigo: "2570" }, { id: 'g12', nome: "PILHA PANASONIC PALITO UND", codigo: "4653" }, { id: 'g13', nome: "PILHA PANASONIC PQ UND", codigo: "4641" }, { id: 'g14', nome: "PILHA RAYOVAC G UND", codigo: "3326" }, { id: 'g15', nome: "PILHA RAYOVAC M UND", codigo: "5399" }, { id: 'g16', nome: "PILHA RAYOVAC PQ UND", codigo: "6191" }, { id: 'g17', nome: "PILHA RAYOVAC PALITO UND", codigo: "4646" }, { id: 'g18', nome: "PINÇA UND", codigo: "3512" }, { id: 'g19', nome: "SABÃO BARRA YPÊ UND", codigo: "0435" }, { id: 'g20', nome: "SABÃO BARRA COCO YPÊ UND", codigo: "3938" }, { id: 'g21', nome: "TIJOLINHO DE CASTANHA UND", codigo: "3824" }, { id: 'g22', nome: "VASSOURA DE PALITO UND", codigo: "3970" }, { id: 'g23', nome: "VASSOURA DE PALHA UND", codigo: "0180" }, { id: 'g24', nome: "Mel de cajú - 500ml", codigo: "13338" }, { id: 'g25', nome: "Mel de cajú - 1L", codigo: "13388" }, { id: 'g26', nome: "BOMBOM MOLE UND", codigo: "2744" }, { id: 'g27', nome: "PEDIGREE FILHOTE KG", codigo: "3714" }, { id: 'g28', nome: "PEDIGREE ADULTO CARNE KG", codigo: "1293" }, { id: 'g29', nome: "WHISKAS CARNE/DELICROSS KG", codigo: "6970" }, { id: 'g30', nome: "KITKAT KG", codigo: "3709" }, { id: 'g31', nome: "WHISKAS PEIXE", codigo: "4336" }, { id: 'g32', nome: "FRISKEIS KG", codigo: "8818" }, { id: 'g33', nome: "PEDIGREE CARNE/LEITE KG", codigo: "9264" }, { id: 'g34', nome: "CERVEJA SKOL UND", codigo: "3255" }, { id: 'g35', nome: "RAÇÃO FARO", codigo: "2078" }, { id: 'g36', nome: "UNHEX", codigo: "8136" }
-      ],
-      "Funcionários Mercantil": [
-        { id: 'm1', nome: "ALICE FALCAO DE OLIVEIRA", codigo: "28" }, { id: 'm2', nome: "CELIO DE FREITAS SANTOS", codigo: "20" }, { id: 'm3', nome: "ERICA CAMILE DOS SANTOS BARBOSA", codigo: "23" }, { id: 'm4', nome: "ERICK DOS SANTOS CARNEIRO", codigo: "21" }, { id: 'm5', nome: "FCO WAGNER RAMOS FERREIRA", codigo: "30" }, { id: 'm6', nome: "KARLA ISADORA PEREIRA ROCHA", codigo: "25" }, { id: 'm7', nome: "LAILSON LUIS BARBOSA RODRIGUES", codigo: "22" }, { id: 'm8', nome: "LUIS NILSON DAMASCENO PAULA", codigo: "19" }, { id: 'm9', nome: "MARCIONILIA DAMASCENO SILVA DOS SANTOS", codigo: "27" }, { id: 'm10', nome: "MARIA LETICIA FREITAS DE OLIVEIRA", codigo: "26" }, { id: 'm11', nome: "MARIA VIVIANE DE LIMA SILVA", codigo: "29" }, { id: 'm12', nome: "MERCANTIL NOSSA SENHORA DE FÁTIMA", codigo: "2" }, { id: 'm13', nome: "NORMA ERICA FERREIRA PAULA", codigo: "24" }, { id: 'm14', nome: "RAFAELA LIMA GONDIM", codigo: "1" }, { id: 'm15', nome: "VINICIOS DE SOUSA COSTA", codigo: "18" }
-      ],
-      "Funcionários Padaria": [
-        { id: 'p1', nome: "ANDERSON CARLOS BARROS", codigo: "10" }, { id: 'p2', nome: "ADRIANO CORREIA BARROS", codigo: "N/A" }, { id: 'p3', nome: "ANA DENISE DA SILVA GONDIM", codigo: "1" }, { id: 'p4', nome: "ASSIS DA SILVA", codigo: "16" }, { id: 'p5', nome: "CARLOS ANDRE G DE SENA", codigo: "11" }, { id: 'p6', nome: "DIANA", codigo: "35" }, { id: 'p7', nome: "EDUARDO", codigo: "34" }, { id: 'p8', nome: "FCO CELIO LIMA SILVA", codigo: "15" }, { id: 'p9', nome: "FCO DE ASSIS BARROS BARBOSA", codigo: "6" }, { id: 'p10', nome: "FCO DEUSIMAR SILVA LIMA", codigo: "12" }, { id: 'p11', nome: "FCO DEUSZIRAN DAMACENO", codigo: "14" }, { id: 'p12', nome: "FCO EVANDO COSTA DINIZ", codigo: "9" }, { id: 'p13', nome: "HELTON CESAR LIMA SANTOS", codigo: "17" }, { id: 'p14', nome: "JOHNNATA BARBOSA", codigo: "5" }, { id: 'p15', nome: "JOAO QUIRINO DA SILVA", codigo: "4" }, { id: 'p16', nome: "MARCOS ANDRE FALCAO FELIX", codigo: "8" }, { id: 'p17', nome: "MARCOS ANTONIO BARROS BARBOSA", codigo: "7" }, { id: 'p18', nome: "MARIA IRISMAR DA SILVA GONDIM", codigo: "32" }, { id: 'p19', nome: "VALTER LUIZ FALCAO FELIX", codigo: "3" }
-      ]
-    };
+<script>
+/* ========== CONFIG ========== */
+const API_URL = "https://script.google.com/macros/s/AKfycbzpPFyRFZLdyuw2xDOsRXmwv0VIp_3ZTltIrsPmgQJ6IcDGRWBiqinr6nXieGuC9XHG/exec";
+/* ============================ */
 
-    // ---------- State ----------
-    let DATA = {};
-    function loadData(){
-      try{
-        const s = localStorage.getItem(DATA_KEY);
-        DATA = s ? JSON.parse(s) : structuredClone(initialData);
-      }catch(e){
-        console.error('loadData error', e);
-        DATA = structuredClone(initialData);
-      }
-    }
-    function saveData(){
-      localStorage.setItem(DATA_KEY, JSON.stringify(DATA));
-    }
-    function resetData(){
-      if(confirm('Restaurar dados iniciais? Isso substituirá os dados salvos.')) {
-        DATA = structuredClone(initialData);
-        saveData();
-        renderAll();
-      }
-    }
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById('installBtn');
+  btn.style.display = 'inline-flex';
+  btn.addEventListener('click', async () => {
+    btn.style.display = 'none';
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const choice = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  });
+});
 
-    // ---------- UI refs ----------
-    const categoriaSelect = document.getElementById('categoria');
-    const resultsDiv = document.getElementById('results');
-    const searchInput = document.getElementById('searchInput');
-    const addBtn = document.getElementById('addBtn');
-    const installBtn = document.getElementById('installBtn');
-    const resetBtn = document.getElementById('resetBtn');
+const elems = {
+  searchInput: document.getElementById('searchInput'),
+  categorySelect: document.getElementById('categorySelect'),
+  contentArea: document.getElementById('contentArea'),
+  noResults: document.getElementById('noResults'),
+  addProductBtn: document.getElementById('addProductBtn'),
+  addCategoryBtn: document.getElementById('addCategoryBtn'),
+  modalBackdrop: document.getElementById('modalBackdrop'),
+  modalTitle: document.getElementById('modalTitle'),
+  modalCategory: document.getElementById('modalCategory'),
+  modalName: document.getElementById('modalName'),
+  modalCode: document.getElementById('modalCode'),
+  cancelModal: document.getElementById('cancelModal'),
+  saveModal: document.getElementById('saveModal')
+};
 
-    // Modals
-    const barcodeOverlay = document.getElementById('barcodeOverlay');
-    const editOverlay = document.getElementById('editOverlay');
-    const deleteOverlay = document.getElementById('deleteOverlay');
-    const barcodeSVG = document.getElementById('barcodeSVG');
-    const barcodeTitle = document.getElementById('barcodeTitle');
-    const barcodeText = document.getElementById('barcodeText');
-    const closeBarcode = document.getElementById('closeBarcode');
+let APP_DATA = []; // loaded from Google Sheets
+let CATEGORIES = [];
 
-    const editForm = document.getElementById('editForm');
-    const editTitle = document.getElementById('editTitle');
-    const itemIdInput = document.getElementById('itemId');
-    const itemNameInput = document.getElementById('itemName');
-    const itemCodeInput = document.getElementById('itemCode');
-    const itemCategorySelect = document.getElementById('itemCategory');
-    const cancelEdit = document.getElementById('cancelEdit');
+function normalize(s){ return (s||'').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(); }
 
-    const cancelDelete = document.getElementById('cancelDelete');
-    const confirmDelete = document.getElementById('confirmDelete');
+/* fetch data from Google Apps Script */
+async function loadData(){
+  try {
+    const res = await fetch(API_URL, {cache: "no-store"});
+    if (!res.ok) throw new Error('Falha ao carregar dados: ' + res.status);
+    const json = await res.json();
+    // json expected array of objects {categoria,nome,codigo}
+    APP_DATA = Array.isArray(json) ? json.map(r => ({
+      categoria: (r.categoria || '').toString(),
+      nome: (r.nome || '').toString(),
+      codigo: (r.codigo || '').toString()
+    })) : [];
+    buildCategories();
+    render();
+  } catch(err){
+    console.error(err);
+    alert('Erro ao carregar dados. Verifique a implantação do Apps Script e se está pública.');
+  }
+}
 
-    let pendingDelete = null;
-    let deferredPrompt = null;
+/* derive categories (unique) */
+function buildCategories(){
+  const set = new Set();
+  APP_DATA.forEach(r => {
+    const c = (r.categoria||'').toString().trim();
+    if (c) set.add(c);
+  });
+  // also include any category that user created during this session (stored in localStorage)
+  const extra = JSON.parse(localStorage.getItem('extraCats')||'[]');
+  extra.forEach(c => c && set.add(c));
+  CATEGORIES = Array.from(set);
+  // update select UI
+  const sel = elems.categorySelect;
+  const modalSel = elems.modalCategory;
+  sel.innerHTML = '<option value="all">Todas as categorias</option>';
+  modalSel.innerHTML = '';
+  CATEGORIES.forEach(c => {
+    const opt = document.createElement('option'); opt.value = c; opt.textContent = c; sel.appendChild(opt);
+    const opt2 = document.createElement('option'); opt2.value = c; opt2.textContent = c; modalSel.appendChild(opt2);
+  });
+}
 
-    // ---------- Helpers ----------
-    function uid(prefix='id'){ return prefix + '_' + Math.random().toString(36).slice(2,9); }
-    function openOverlay(el){ el.classList.add('visible'); el.style.pointerEvents='auto'; el.setAttribute('aria-hidden','false'); }
-    function closeOverlay(el){ el.classList.remove('visible'); el.style.pointerEvents='none'; el.setAttribute('aria-hidden','true'); }
-
-    function populateCategoryOptions(){
-      categoriaSelect.innerHTML = '<option value="all">Todas as Categorias</option>';
-      itemCategorySelect.innerHTML = '';
-      Object.keys(DATA).forEach(cat=>{
-        const opt = document.createElement('option'); opt.value = cat; opt.textContent = cat;
-        categoriaSelect.appendChild(opt);
-        const opt2 = opt.cloneNode(true);
-        itemCategorySelect.appendChild(opt2);
-      });
-    }
-
-    // ---------- Render ----------
-    function renderAll(){
-      populateCategoryOptions();
-      search(); // render based on current query + category
-    }
-
-    function renderResults(filtered){
-      resultsDiv.innerHTML = '';
-      const categories = Object.keys(filtered);
-      let hadAny=false;
-      categories.forEach(cat=>{
-        const items = filtered[cat];
-        if(!items || items.length===0) return;
-        hadAny=true;
-        const title = document.createElement('div');
-        title.className = 'category-title';
-        title.textContent = cat;
-        resultsDiv.appendChild(title);
-
-        items.forEach(item=>{
-          const card = document.createElement('div'); card.className='card';
-          const left = document.createElement('div'); left.className='left';
-          const avatar = document.createElement('div'); avatar.className='avatar';
-          const initials = item.nome.split(' ').slice(0,2).map(w=>w[0]).join('').slice(0,2).toUpperCase();
-          avatar.textContent = initials || item.nome.slice(0,2).toUpperCase();
-          const meta = document.createElement('div'); meta.className='meta';
-          const name = document.createElement('div'); name.className='name'; name.textContent = item.nome;
-          const code = document.createElement('div'); code.className='code'; code.textContent = item.codigo;
-          meta.appendChild(name); meta.appendChild(code);
-
-          left.appendChild(avatar); left.appendChild(meta);
-
-          const actions = document.createElement('div'); actions.className='actions';
-
-          const viewBtn = document.createElement('button'); viewBtn.className='icon-btn primary'; viewBtn.title='Visualizar código';
-          viewBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/></svg>`;
-          viewBtn.onclick = ()=> showBarcode(item);
-
-          const editBtn = document.createElement('button'); editBtn.className='icon-btn'; editBtn.title='Editar';
-          editBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" stroke="currentColor" stroke-width="1.2"/></svg>`;
-          editBtn.onclick = (e)=> { e.stopPropagation(); openEdit(item,cat); };
-
-          const delBtn = document.createElement('button'); delBtn.className='icon-btn danger'; delBtn.title='Apagar';
-          delBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18" stroke="currentColor" stroke-width="1.2"/><path d="M8 6v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6" stroke="currentColor" stroke-width="1.2"/></svg>`;
-          delBtn.onclick = (e)=> { e.stopPropagation(); openDelete(item,cat); };
-
-          actions.appendChild(viewBtn); actions.appendChild(editBtn); actions.appendChild(delBtn);
-
-          card.appendChild(left); card.appendChild(actions);
-          resultsDiv.appendChild(card);
-        });
-      });
-
-      if(!hadAny){
-        document.getElementById('emptyHint').style.display = 'block';
-        resultsDiv.style.display = 'none';
-      } else {
-        document.getElementById('emptyHint').style.display = 'none';
-        resultsDiv.style.display = 'block';
-      }
-    }
-
-    // ---------- Search ----------
-    function search(){
-      const q = searchInput.value.trim().toLowerCase();
-      const selected = categoriaSelect.value;
-      const filtered = {};
-      const cats = selected === 'all' ? Object.keys(DATA) : [selected];
-      cats.forEach(cat=>{
-        filtered[cat] = (DATA[cat] || []).filter(i=>{
-          return i.nome.toLowerCase().includes(q) || (i.codigo || '').toLowerCase().includes(q);
-        });
-      });
-      renderResults(filtered);
-    }
-
-    // ---------- CRUD ----------
-    function openAdd(){
-      itemIdInput.value = '';
-      editTitle.textContent = 'Adicionar Item';
-      itemNameInput.value = '';
-      itemCodeInput.value = '';
-      itemCategorySelect.value = Object.keys(DATA)[0] || '';
-      openOverlay(editOverlay);
-      setTimeout(()=>itemNameInput.focus(),80);
-    }
-    function openEdit(item, category){
-      itemIdInput.value = item.id;
-      editTitle.textContent = 'Editar Item';
-      itemNameInput.value = item.nome;
-      itemCodeInput.value = item.codigo;
-      itemCategorySelect.value = category;
-      // save originalCategory in form dataset
-      editForm.dataset.originalCategory = category;
-      openOverlay(editOverlay);
-      setTimeout(()=>itemNameInput.focus(),80);
-    }
-    editForm.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const id = itemIdInput.value || uid('item');
-      const nome = itemNameInput.value.trim();
-      const codigo = itemCodeInput.value.trim();
-      const newCategory = itemCategorySelect.value;
-      if(!nome || !codigo) { alert('Preencha nome e código'); return; }
-
-      const originalCategory = editForm.dataset.originalCategory;
-      // remove if editing and category changed
-      if(itemIdInput.value && originalCategory && DATA[originalCategory]){
-        DATA[originalCategory] = DATA[originalCategory].filter(x=>x.id !== itemIdInput.value);
-      } else if(itemIdInput.value){
-        // if editing but originalCategory not present (edge), remove from all categories
-        Object.keys(DATA).forEach(cat => {
-          DATA[cat] = DATA[cat].filter(x=>x.id !== itemIdInput.value);
-        });
-      }
-
-      if(!DATA[newCategory]) DATA[newCategory] = [];
-      DATA[newCategory].push({ id, nome, codigo });
-      saveData();
-      closeOverlay(editOverlay);
-      renderAll();
+/* render products list according to search + category */
+function render(){
+  const q = normalize(elems.searchInput.value);
+  const selected = elems.categorySelect.value;
+  elems.contentArea.innerHTML = '';
+  // group by category
+  const grouped = {};
+  APP_DATA.forEach(item => {
+    // ignore rows where name is empty (these could be placeholder from creating category)
+    if (!item.nome || item.nome.trim()==='') return;
+    if (!grouped[item.categoria]) grouped[item.categoria]=[];
+    grouped[item.categoria].push(item);
+  });
+  // create an array of categories to display (respect selected)
+  const catsToShow = selected==='all' ? CATEGORIES : [selected];
+  let totalShown = 0;
+  catsToShow.forEach(cat => {
+    const list = (grouped[cat] || []).filter(it => {
+      if (!q) return true;
+      return normalize(it.nome).includes(q) || (it.codigo||'').includes(q);
     });
-    cancelEdit.addEventListener('click', ()=> closeOverlay(editOverlay));
-
-    // Delete
-    function openDelete(item, category){
-      pendingDelete = { item, category };
-      openOverlay(deleteOverlay);
-    }
-    confirmDelete.addEventListener('click', ()=>{
-      if(!pendingDelete) return;
-      const { item, category } = pendingDelete;
-      DATA[category] = (DATA[category] || []).filter(i=>i.id !== item.id);
-      saveData();
-      pendingDelete = null;
-      closeOverlay(deleteOverlay);
-      renderAll();
+    if (list.length===0) return;
+    totalShown += list.length;
+    const title = document.createElement('div');
+    title.className = 'category-title';
+    title.textContent = cat;
+    elems.contentArea.appendChild(title);
+    list.forEach(it => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="left">
+          <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(180deg,#fff,#f3f3f3);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary)">${cat[0]||'P'}</div>
+          <div>
+            <div class="prod-name">${it.nome}</div>
+            <div class="prod-code">${it.codigo}</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button title="Mostrar código" class="icon-btn" onclick="copyCode('${(it.codigo||'').replace(/'/g,"\\'")}')">📋</button>
+          <button title="Editar" class="icon-btn" onclick="editItem('${(it.categoria||'').replace(/'/g,"\\'")}','${(it.nome||'').replace(/'/g,"\\'")}','${(it.codigo||'').replace(/'/g,"\\'")}')">✏️</button>
+        </div>
+      `;
+      elems.contentArea.appendChild(card);
     });
-    cancelDelete.addEventListener('click', ()=> { pendingDelete=null; closeOverlay(deleteOverlay); });
+  });
 
-    // ---------- Barcode (view) ----------
-    function showBarcode(item){
-      const code = (item.codigo||'').toString();
-      if(!code || code.toLowerCase()==='n/a'){
-        barcodeTitle.textContent = item.nome;
-        barcodeText.textContent = 'Sem código';
-        barcodeSVG.innerHTML = `<text x="50%" y="50%" font-size="14" dominant-baseline="middle" text-anchor="middle" fill="#555">Código não disponível</text>`;
-        openOverlay(barcodeOverlay);
-        return;
-      }
+  elems.noResults.style.display = totalShown>0 ? 'none' : 'block';
+}
 
-      barcodeTitle.textContent = item.nome;
-      barcodeText.textContent = code;
+/* copy code to clipboard */
+function copyCode(code){
+  if (!code) return;
+  navigator.clipboard?.writeText(code).then(()=>alert('Código copiado: ' + code));
+}
 
-      // clear svg
-      while(barcodeSVG.firstChild) barcodeSVG.removeChild(barcodeSVG.firstChild);
-      // JsBarcode supports CODE128 of alphanumeric
-      try {
-        JsBarcode(barcodeSVG, code, {
-          format: "CODE128",
-          width: 2.0,
-          height: 70,
-          displayValue: true,
-          font: "monospace",
-          margin: 8
-        });
-      } catch(err){
-        // fallback drawing simple text
-        barcodeSVG.innerHTML = `<text x="50%" y="50%" font-size="14" dominant-baseline="middle" text-anchor="middle" fill="#555">Não escaneável</text>`;
-        console.error('barcode error', err);
-      }
-      openOverlay(barcodeOverlay);
-    }
-    closeBarcode.addEventListener('click', ()=> closeOverlay(barcodeOverlay));
+/* open modal to add product */
+function openAddModal(){
+  elems.modalTitle.textContent = 'Adicionar Produto';
+  elems.modalName.value = '';
+  elems.modalCode.value = '';
+  // ensure categories are updated
+  buildCategories();
+  elems.modalBackdrop.style.display = 'flex';
+}
 
-    // ---------- Events ----------
-    addBtn.addEventListener('click', openAdd);
-    searchInput.addEventListener('input', search);
-    categoriaSelect.addEventListener('change', search);
-    resetBtn.addEventListener('click', resetData);
+/* open modal to edit item (we will create a new row in sheet for edit - simple way is to create new row and optionally keep old) */
+function editItem(categoria, nome, codigo){
+  elems.modalTitle.textContent = 'Editar Produto (salvar cria nova entrada)';
+  buildCategories();
+  elems.modalCategory.value = categoria || (CATEGORIES[0]||'');
+  elems.modalName.value = nome || '';
+  elems.modalCode.value = codigo || '';
+  elems.modalBackdrop.style.display = 'flex';
+}
 
-    // Close modals when clicking outside
-    [barcodeOverlay, editOverlay, deleteOverlay].forEach(modal=>{
-      modal.addEventListener('click', (e)=>{
-        if(e.target === modal) closeOverlay(modal);
-      });
-    });
+/* close modal */
+function closeModal(){ elems.modalBackdrop.style.display='none'; }
 
-    // ---------- Install prompt (PWA) ----------
-    window.addEventListener('beforeinstallprompt', (e)=>{
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'inline-flex';
-    });
-    installBtn.addEventListener('click', async ()=>{
-      if(!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const choice = await deferredPrompt.userChoice;
-      console.log('userChoice', choice);
-      deferredPrompt = null;
-      installBtn.style.display = 'none';
-    });
+/* show prompt to add category */
+async function addCategoryPrompt(){
+  const name = prompt('Nome da nova categoria:');
+  if (!name) return;
+  // save locally (so UI updates instantly) and also append a placeholder row to Google Sheets
+  const extra = JSON.parse(localStorage.getItem('extraCats')||'[]');
+  if (!extra.includes(name)) { extra.push(name); localStorage.setItem('extraCats', JSON.stringify(extra)); }
+  buildCategories();
+  // append placeholder row to sheet so category persists for everyone
+  try {
+    await postData({categoria: name, nome: '', codigo: ''});
+    await loadData();
+    alert('Categoria "'+name+'" adicionada.');
+  } catch(e){ console.error(e); alert('Erro ao adicionar categoria.'); }
+}
 
-    // ---------- Dynamic Manifest & Service Worker registration ----------
-    // Create manifest.json dynamically so the page can be used as single-file (browser must accept blob manifests)
-    try {
-      const manifest = {
-        name: "Códigos MNSF",
-        short_name: "MNSF Códigos",
-        start_url: ".",
-        display: "standalone",
-        background_color: "#f7f9fc",
-        theme_color: "#0b74ff",
-        icons: [
-          { src: "data:image/svg+xml;base64," + btoa(`<svg xmlns='http://www.w3.org/2000/svg' width='192' height='192'><rect width='100%' height='100%' rx='32' fill='#0b74ff'/><text x='50%' y='54%' font-size='84' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700'>M</text></svg>`), sizes: "192x192", type: "image/svg+xml" }
-        ]
-      };
-      const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('link');
-      link.rel = 'manifest';
-      link.href = url;
-      document.head.appendChild(link);
-    } catch(e){
-      console.warn('manifest creation failed', e);
-    }
+/* POST helper */
+async function postData(obj){
+  // Apps Script exec expects body sent as JSON — we do that
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(obj)
+  });
+  if (!res.ok) throw new Error('Falha ao postar: '+res.status);
+  return res.text();
+}
 
-    // Service worker: register a minimal SW dynamically (catches fetch and tries network-first)
-    (async function registerSW(){
-      if('serviceWorker' in navigator){
-        try {
-          const swCode = `
-            const CACHE = 'mnsf-cache-v1';
-            self.addEventListener('install', event => {
-              self.skipWaiting();
-            });
-            self.addEventListener('activate', event => {
-              event.waitUntil(clients.claim());
-            });
-            self.addEventListener('fetch', event => {
-              const req = event.request;
-              // let resources pass-through for POST or non-GET
-              if(req.method !== 'GET') return;
-              event.respondWith(
-                fetch(req).then(resp => {
-                  return resp;
-                }).catch(()=>caches.match(req).then(m=>m||fetch(req).catch(()=>new Response(''))))
-              );
-            });
-          `;
-          const blob = new Blob([swCode], {type: 'text/javascript'});
-          const swUrl = URL.createObjectURL(blob);
-          await navigator.serviceWorker.register(swUrl);
-          console.log('Service worker registered (dynamic).');
-        } catch(err){
-          console.warn('Service worker registration failed:', err);
-        }
-      }
-    })();
+/* save from modal */
+async function saveFromModal(){
+  const cat = elems.modalCategory.value || '';
+  const nome = elems.modalName.value.trim();
+  const codigo = elems.modalCode.value.trim();
+  if (!cat) { alert('Escolha uma categoria'); return; }
+  if (!nome) { alert('Preencha o nome do produto'); return; }
+  if (!codigo) { if(!confirm('Código vazio. Deseja prosseguir?')) return; }
+  try {
+    await postData({categoria: cat, nome, codigo});
+    closeModal();
+    await loadData();
+    alert('Produto salvo.');
+  } catch(err) {
+    console.error(err);
+    alert('Erro ao salvar produto.');
+  }
+}
 
-    // ---------- Init ----------
-    loadData();
-    renderAll();
+/* events */
+elems.searchInput.addEventListener('input', render);
+elems.categorySelect.addEventListener('change', render);
+elems.addProductBtn.addEventListener('click', openAddModal);
+elems.addCategoryBtn.addEventListener('click', addCategoryPrompt);
+elems.cancelModal.addEventListener('click', closeModal);
+elems.saveModal.addEventListener('click', saveFromModal);
 
-    // populate initial categories in form (after data loaded)
-    populateCategoryOptions();
+/* initial load */
+loadData();
 
-    // keyboard: esc to close modals
-    window.addEventListener('keydown', (e)=>{
-      if(e.key === 'Escape'){
-        [barcodeOverlay, editOverlay, deleteOverlay].forEach(closeOverlay);
-      }
-    });
+/* expose some functions for inline handlers */
+window.copyCode = copyCode;
+window.editItem = editItem;
+</script>
 
-    // small helper: long-press on card to copy code
-    let pressTimer;
-    resultsDiv.addEventListener('pointerdown', (e)=>{
-      const card = e.target.closest('.card');
-      if(!card) return;
-      pressTimer = setTimeout(()=>{
-        const codeEl = card.querySelector('.code');
-        const text = codeEl ? codeEl.textContent : '';
-        if(text) navigator.clipboard?.writeText(text).then(()=> alert('Código copiado: ' + text)).catch(()=>{/*no-op*/});
-      }, 800);
-    });
-    resultsDiv.addEventListener('pointerup', ()=> clearTimeout(pressTimer));
-    resultsDiv.addEventListener('pointerleave', ()=> clearTimeout(pressTimer));
-  </script>
 </body>
 </html>
