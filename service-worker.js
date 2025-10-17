@@ -1,26 +1,49 @@
-const CACHE_NAME = 'mnsf-cache-v1';
+const CACHE_NAME = 'mnsf-cache-v2';
 const FILES_TO_CACHE = [
-  '/Buscar-codigos-mnsf/index.html',
-  '/Buscar-codigos-mnsf/manifest.json',
-  '/Buscar-codigos-mnsf/logo-mnsf.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './logo-mnsf.png',
+  'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js'
 ];
 
-// install
+// Instalação: Adiciona os ficheiros do app ao cache
 self.addEventListener('install', evt => {
   evt.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES_TO_CACHE))
+    caches.open(CACHE_NAME).then(cache => {
+      console.log('Pré-cache dos ficheiros do aplicativo');
+      return cache.addAll(FILES_TO_CACHE);
+    })
   );
   self.skipWaiting();
 });
 
-// activate
+// Ativação: Limpa caches antigos
 self.addEventListener('activate', evt => {
-  evt.waitUntil(self.clients.claim());
+  evt.waitUntil(
+    caches.keys().then(keyList => {
+      return Promise.all(keyList.map(key => {
+        if (key !== CACHE_NAME) {
+          console.log('Removendo cache antigo', key);
+          return caches.delete(key);
+        }
+      }));
+    })
+  );
+  self.clients.claim();
 });
 
-// fetch
+// Fetch: Tenta servir a partir da rede primeiro, depois do cache
 self.addEventListener('fetch', evt => {
+  // Ignora os pedidos para a API do Google Sheets para que sejam sempre feitos à rede
+  if (evt.request.url.includes('script.google.com')) {
+    evt.respondWith(fetch(evt.request));
+    return;
+  }
+
   evt.respondWith(
-    caches.match(evt.request).then(resp => resp || fetch(evt.request))
+    fetch(evt.request).catch(() => {
+      return caches.match(evt.request);
+    })
   );
 });
